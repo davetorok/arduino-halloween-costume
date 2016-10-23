@@ -1,6 +1,8 @@
 # arduino-halloween-costume
 Arduino "Robot" Halloween Costume with NeoPixel LED, buttons, and sound effects.  21 animations and a very special  self-destruct sequence designed by my son.
 
+[![Image](https://raw.githubusercontent.com/davetorok/arduino-halloween-costume/master/images/20161022-1720-49_800.jpg)](https://raw.githubusercontent.com/davetorok/arduino-halloween-costume/master/images/20161022-1720-49_800.jpg)
+
 ## Overview
 The costume was designed primarily around a 24-NeoPixel ring and two 8-NeoPixel strips.  A greeting card speaker was added for sound effects, and a 5 pushbutton module was added for controls.
 
@@ -44,3 +46,6 @@ Center Ring LEDs will start to Power Up... All Green through 50%, Yellow through
 * Power Supply - 5V USB power pack (2800 maH / 1000ma)
 * Various USB cables, barrel connectors, etc.
 * Human Child
+
+
+[![Image](https://raw.githubusercontent.com/davetorok/arduino-halloween-costume/master/images/20161023-1402-32_800.jpg)](https://raw.githubusercontent.com/davetorok/arduino-halloween-costume/master/images/20161023-1402-32_800.jpg)
