@@ -4,7 +4,7 @@ Arduino "Robot" Halloween Costume with NeoPixel LED, buttons, and sound effects.
 ## Overview
 The costume was designed primarily around a 24-NeoPixel ring and two 8-NeoPixel strips.  A greeting card speaker was added for sound effects, and a 5 pushbutton module was added for controls.
 
-There are 15 animation patterns for the main pixel ring and 6 for the side strips.  The sound effects include random "robot" tones, and various pitch up/down effects, and explosion / random noise.
+There are 15 animation patterns for the main pixel ring and 6 for the side strips.  The sound effects include random "robot" tones, and various pitch up/down effects, and explosion / random noise.  By default the animation patterns change every 20 seconds.
 
 The button controls let you change and hold the animation sequnce, generate several sound effects, go into "flashlight mode" to assist with halloween candy inspection, and adjust overall brightness.
 
