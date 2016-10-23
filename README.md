@@ -6,6 +6,31 @@ The costume was designed primarily around a 24-NeoPixel ring and two 8-NeoPixel 
 
 There are 15 animation patterns for the main pixel ring and 6 for the side strips.  The sound effects include random "robot" tones, and various pitch up/down effects, and explosion / random noise.
 
+The button controls let you change and hold the animation sequnce, generate several sound effects, go into "flashlight mode" to assist with halloween candy inspection, and adjust overall brightness.
+
+## Self Destruct Sequence
+
+Center Ring LEDs will start to Power Up... All Green through 50%, Yellow through 75%, Red through 100%.  Side LED strips will alternately flash red slowly, getting faster as the sequence continues.  Sound will increase in pitch. At 100%, LED Ring will turn full white and slowly fade to back, side LEDs will go through a slow color hue change, and speaker will do "explosion" sound for several seconds.
+
+## Button Functions
+* Button 1 (BIG RED BUTTON) - Self-Destruct Sequence
+* Button 2
+ * Short Press - Go to next animation sequence (ring and side strips)
+ * Long Press - HOLD animation sequence (ring and side strips)
+* Button 3
+ * Short Press - Cycle through Brightness Levels (20%,40%,60%,80%,100%)
+ * Long Press - FLASHLIGHT MODE (Full 100% bright).  Each Long Press Cycles through (Ring only, Side Strips Only, All On, Off)
+* Button 4
+ * Short Press - Play "La Cucaracha" on speaker
+ * Long Press - Play one of random sound effects (beeps, alarm sound, sound up/down, noise)
+* Button 5
+ * Short Press - Go to next Side Strip animation sequence
+ * Long Press - HOLD Side Strip Animation Sequence (Long Press TOGGLES HOLD ON/OFF)
+
+## Cool Code Things
+* Detect Button Library keeps track of button debounce, short press / long press, and release after long press.  Internally it uses arrays to store state changes, but the output button "event" is a single byte you can mask to get the event type and button number
+* Animations are based on 'animation frame' which is currently set to trigger every 10ms.  Some animations are stateless and can key off of the global animation frame number.  Others save some LED state, or need to be slowed down by refreshing every 'n'th call.
+
 ## Materials
 * Arduino Uno R3
 * NeoPixel 24-LED ring
@@ -16,8 +41,6 @@ There are 15 animation patterns for the main pixel ring and 6 for the side strip
 * 1000 uF Capacitors (x 2) (for NeoPixel power protection)
 * 5 Pushbuttons (Normally Open)
 * Cardboard Box, painted silver
-* Power Supply - 5V USB power packs (2800 maH)
+* Power Supply - 5V USB power pack (2800 maH / 1000ma)
 * Various USB cables, barrel connectors, etc.
 * Human Child
-
-## Functions
