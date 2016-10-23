@@ -41,12 +41,6 @@ CRGB pixels_l[NUMPIXELS_L];
 CRGB pixels_r[NUMPIXELS_R];
 
 
-// When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
-// Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
-// example for more information on possible values.
-//Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-//Adafruit_NeoPixel pixels_l = Adafruit_NeoPixel(NUMPIXELS_L, PIN_L, NEO_GRB + NEO_KHZ800);
-//Adafruit_NeoPixel pixels_r = Adafruit_NeoPixel(NUMPIXELS_R, PIN_R, NEO_GRB + NEO_KHZ800);
 
 /* BUTTON CONFIG DELAY */
 const int bounceDelay = 20; // delay to detect debounce
@@ -218,7 +212,7 @@ void loop() {
      
     }
 
-    //TODO CLEAR button event - move this when we handle individual presses
+    // clear button event
     buttonEvent = 0;
   }
 
@@ -515,7 +509,7 @@ void randombuzz() {
     
     for (int j=0; j < NUMPIXELS;j++ ){
       
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+      
       if (currpos == j) {
           pixels[j] = CRGB::White;
       }
@@ -539,13 +533,11 @@ void randombuzz() {
 void rect() {
    // every 2th animation frame
     if (animationframe % 2 != 0) return;
-    // For a set of NeoPixels the first NeoPixel is 0, second is 1, all the way up to the count of pixels minus one.
     int i = (animationframe/2) % NUMPIXELS;
     int times = (animationframe/2)/(NUMPIXELS);
       for (int j=0; j < NUMPIXELS;j++ ){
       
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-      if (i%12 == j%12 || (j+6 + ((i+NUMPIXELS*times)/7)) % 12 == i  % 12) {
+     if (i%12 == j%12 || (j+6 + ((i+NUMPIXELS*times)/7)) % 12 == i  % 12) {
       pixels[j].setHue(animationframe%256); // superbright white
       
      }
@@ -563,11 +555,9 @@ void rect() {
 void square() {
    // every 2th animation frame
     if (animationframe % 2 != 0) return;
-    // For a set of NeoPixels the first NeoPixel is 0, second is 1, all the way up to the count of pixels minus one.
     int i = (NUMPIXELS -1) - ((animationframe/2) % NUMPIXELS);
       for (int j=0; j < NUMPIXELS;j++ ){
       
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
       if (i%6 == j%6 ) {
         pixels[j].setHue(animationframe%256);
     
@@ -593,7 +583,6 @@ void smile() {
 
     for (int j=0; j < NUMPIXELS;j++ ){
       
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
       if (j <= 4 || j == 9 || j == 15 || j >=20 ) {
           pixels[(j+i)%NUMPIXELS].setHue((i*4)%256); // from colorwheel
       }
@@ -611,7 +600,6 @@ void halves() {
     
     for (int j=0; j < NUMPIXELS;j++ ){
       
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
       if (j/12 == i % 2) {
           pixels[(j+i)%NUMPIXELS].setHue( ((i*4)+((i%2)*128))%256); // from colorwheel
       }
@@ -630,7 +618,6 @@ void quarters() {
     
     for (int j=0; j < NUMPIXELS;j++ ){
       
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
       if (j/6 == i % 4) {
           pixels[j].setHue((i*8)%256); // from colorwheel
       }
@@ -660,7 +647,6 @@ void bounce2() {
   
     for (int j=0; j < NUMPIXELS;j++ ){
       
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
       if ((i==j || NUMPIXELS-j == i) && i < 6) {
         pixels[j] = CRGB::Fuchsia;
       
@@ -731,10 +717,8 @@ void superbright() {
   if (animationframe % 2 != 0) return;
   int i = (animationframe / 2) % NUMPIXELS;
 
-    // For a set of NeoPixels the first NeoPixel is 0, second is 1, all the way up to the count of pixels minus one.
     for (int j=0; j < NUMPIXELS;j++ ){
       
-      // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
     if (i%8 == j%8 ) {
         pixels[j] = CRGB::White;
     }
@@ -757,7 +741,6 @@ void circlechase() {
  
     for (int j=0; j < NUMPIXELS;j++ ){
     
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
     if (((NUMPIXELS + (j - i) )% NUMPIXELS) < 6 ) {
     
     pixels[j] = CHSV(animationframe%256, 255, pixelbright); 
