@@ -1,5 +1,5 @@
 # arduino-halloween-costume
-Arduino "Robot" Halloween Costume with NeoPixel LED, buttons, and sound effects.  21 animations and a very special  self-destruct sequence designed by my son.
+Arduino "Robot" Halloween Costume with NeoPixel LED, buttons, and sound effects.  21 animations and a very special  self-destruct sequence designed by my son. NEW!!! Eagles Mode for the SUPERBOWL 2-12-203
 
 [![Image](https://raw.githubusercontent.com/davetorok/arduino-halloween-costume/master/images/20161022-1720-49_800.jpg)](https://raw.githubusercontent.com/davetorok/arduino-halloween-costume/master/images/20161022-1720-49_800.jpg)
 
@@ -16,6 +16,8 @@ Center Ring LEDs will start to Power Up... All Green through 50%, Yellow through
 
 ## Button Functions
 * Button 1 (BIG RED BUTTON) - Self-Destruct Sequence
+ * Short Press - SELF DESTRUCT SEQUENCE
+ * Long Press - HOLD to TOGGLE EAGLES MODE!!!!  ALL COLORS ARE GREEN and a very special "Fly Eagles Fly" for Button 4 short press
 * Button 2
  * Short Press - Go to next animation sequence (ring and side strips)
  * Long Press - HOLD animation sequence (ring and side strips)
@@ -23,7 +25,7 @@ Center Ring LEDs will start to Power Up... All Green through 50%, Yellow through
  * Short Press - Cycle through Brightness Levels (20%,40%,60%,80%,100%)
  * Long Press - FLASHLIGHT MODE (Full 100% bright).  Each Long Press Cycles through (Ring only, Side Strips Only, All On, Off)
 * Button 4
- * Short Press - Play "La Cucaracha" on speaker
+ * Short Press - Play "La Cucaracha" on speaker ("Fly Eagles Fly" in Eagles Mode)
  * Long Press - Play one of random sound effects (beeps, alarm sound, sound up/down, noise)
 * Button 5
  * Short Press - Go to next Side Strip animation sequence

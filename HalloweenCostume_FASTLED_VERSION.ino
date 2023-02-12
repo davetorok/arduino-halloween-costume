@@ -34,6 +34,13 @@ HALLOWEEN COSTUME
 #define BUTTONLONGOFF 0x800 // release after long press
 #define BUTTONNUMBERMASK  0xFF
 
+//Philadelphia EAGLES
+#define EAGLESGREEN_R 0x00
+#define EAGLESGREEN_G 0xFF
+#define EAGLESGREEN_B 0x00
+#define EAGLESGREEN_HUE 80
+
+CRGB CRGB_eaglesgreen = CRGB(EAGLESGREEN_R,EAGLESGREEN_G,EAGLESGREEN_B);
 
 // set up FASTLED library
 CRGB pixels[NUMPIXELS];
@@ -72,9 +79,23 @@ int flashlight_mode = 0; // flashlight mode = super bright. 0 = off 1 = ring onl
 int pattern_hold = 0; // 0 = Auto Advance 1 = HOLD pattern
 int strip_pattern_hold = 0; // 0 = Auto Advance 1 = HOLD pattern
 
+int eagles_mode = 0; // PHILADELPHIA EAGLES GREEN 
+
 const int randomdim_numleds = 16;
 int melody[] = {
   NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4
+};
+
+int melody_fef[] = {
+  NOTE_G4, NOTE_B3, NOTE_C4, NOTE_D4,
+  NOTE_B3, NOTE_C4, NOTE_D4, NOTE_E4, NOTE_FS4, NOTE_G4, NOTE_C4,  0
+};
+
+#define FEF_NUM_NOTES 12
+
+int noteDurations_fef[] = {
+2, 4, 4, 1,
+8, 8, 4, 4, 4, 4, 1, 2
 };
 
 int melody_lc[] = {
@@ -138,9 +159,15 @@ void loop() {
     ////Serial.print("   BUTTON EVENT IS ");
     /////  Serial.println(buttonEvent);
     //Button 1 = Self Destruct
-    if (((buttonEvent & BUTTONNUMBERMASK) == 1) && (buttonEvent & BUTTONON))
+    if (((buttonEvent & BUTTONNUMBERMASK) == 1) && (buttonEvent & BUTTONOFF))
     {
       selfDestructSequence();
+    }
+    //Button 1 long = EAGLES MODE TOGGLE
+    if (((buttonEvent & BUTTONNUMBERMASK) == 1) && (buttonEvent & BUTTONLONG))
+    {
+      quick_tone();
+      eagles_mode = (eagles_mode + 1) % 2;
     }
     //Button 2 = Change Pattern; RELEASE hold if enabled
     if (((buttonEvent & BUTTONNUMBERMASK) == 2) && (buttonEvent & BUTTONOFF))
@@ -186,7 +213,7 @@ void loop() {
     //Button 4 = Sound Effect - La Cucaracha
     if (((buttonEvent & BUTTONNUMBERMASK) == 4) && (buttonEvent & BUTTONOFF))
     {
-      la_cucaracha();
+      eagles_mode ? fly_eagles_fly() : la_cucaracha();
     }
     //Button 4 LONG = Random Sound Effect
     if (((buttonEvent & BUTTONNUMBERMASK) == 4) && (buttonEvent & BUTTONLONG))
@@ -299,8 +326,8 @@ void strips_redgreen() {
       
       if (j <= (i%NUMPIXELS_L) )
       {
-        pixels_l[j] = CRGB::Red; 
-        pixels_r[j] = CRGB::Green;
+        pixels_l[j] = (eagles_mode ? CRGB_eaglesgreen : CRGB::Red); 
+        pixels_r[j] = (eagles_mode ? CRGB_eaglesgreen : CRGB::Green);
       }
       else {
          pixels_l[j] = CRGB::Black; 
@@ -322,8 +349,8 @@ void strips_superbright() {
       
       // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
       if (i%4 == j%4 ) {
-      pixels_l[j] = CRGB::White; // superbright white
-      pixels_r[j] = CRGB::White; // superbright white
+      pixels_l[j] = (eagles_mode ? CRGB_eaglesgreen : CRGB::White); // superbright white
+      pixels_r[j] = (eagles_mode ? CRGB_eaglesgreen :CRGB::White); // superbright white
       
      }
       else {
@@ -343,8 +370,8 @@ void strips_bounce() {
       for (int j=0; j < NUMPIXELS_L;j++ ){
       
       if (i==j || NUMPIXELS_L-j == i ) {
-        pixels_l[j] = CRGB::Red;
-        pixels_r[j] = CRGB::Red;
+        pixels_l[j] = (eagles_mode ? CRGB_eaglesgreen :CRGB::Red);
+        pixels_r[j] = (eagles_mode ? CRGB_eaglesgreen :CRGB::Red);
       }
       else {
         pixels_l[j] = CRGB::Black;
@@ -357,16 +384,23 @@ void strips_bounce() {
 }
 
 void strips_slowgradient() {
+
+  if (eagles_mode) {
+  fill_gradient(pixels_l,0,CHSV(80, 255, 255), NUMPIXELS_L-1,   CHSV(80, 255, 255));
+  fill_gradient(pixels_r,0,CHSV(80, 255, 255), NUMPIXELS_L-1,   CHSV(80, 255, 255));
+  }
   
+  else {
   fill_gradient(pixels_l,0,CHSV((animationframe/4+128) % 256, 255, 255), NUMPIXELS_L-1,   CHSV(((animationframe/4) + 192) % 256, 255, 255));
   fill_gradient(pixels_r,0,CHSV((animationframe/4) % 256, 255, 255), NUMPIXELS_L-1,   CHSV(((animationframe/4) + 64) % 256, 255, 255));
+  }
   FastLED.show();  
 }
 
 void strips_pulse() {
   //pulse a single color in brightness, brighter towards the center of the strip
-  static int the_color = random8();
-  if (animationframe  % 256 == 0) the_color = random8();
+  static int the_color = (eagles_mode ? 80 :random8());
+  if (animationframe  % 256 == 0) the_color = (eagles_mode ? 80 :random8());
   //brightness from 0 to 192 and back
   int pixelbright = ((animationframe % 64) < 32) ? animationframe % 64 * 3 : (191 - (animationframe % 64 * 3 ));
   for (int j = 0; j < 4; j++) {
@@ -383,10 +417,10 @@ void strips_pulse() {
 void strips_randompos() {
      int thisone = random8(NUMPIXELS_L);
      fill_solid(pixels_l, NUMPIXELS_L, CRGB::Black);
-     pixels_l[thisone].setRGB(random8(),random8(),random8());
+     if (eagles_mode ? pixels_l[thisone] = CRGB_eaglesgreen : pixels_l[thisone].setRGB(random8(),random8(),random8()))
      thisone = random8(NUMPIXELS_R);
      fill_solid(pixels_r, NUMPIXELS_R, CRGB::Black);
-     pixels_r[thisone].setRGB(random8(),random8(),random8());
+     if (eagles_mode ?  pixels_r[thisone] = CRGB_eaglesgreen : pixels_r[thisone].setRGB(random8(),random8(),random8()));
      FastLED.show(); // This sends the updated pixel color to the hardware.  
 }
 
@@ -408,9 +442,17 @@ void ring_randomdim(int numleds, int interval) {
      
       //new led at position 0 
       cpos[0] = random(NUMPIXELS);
+      if (eagles_mode)
+      {
+        cred[0] = EAGLESGREEN_R ;
+        cgreen[0] = EAGLESGREEN_G;
+        cblue[0] = EAGLESGREEN_B;
+      }
+      else {
       cred[0] = random(256); 
       cgreen[0] = random(256);
       cblue[0] = random(256);
+      }
       //end new interval
     }
     //clear old leds
@@ -480,7 +522,18 @@ void setPixelHeatColor (int Pixel, byte temperature) {
   // calculate ramp up from
   byte heatramp = t192 & 0x3F; // 0..63
   heatramp <<= 2; // scale up to 0..252
- 
+
+ if (eagles_mode) {
+   // figure out which third of the spectrum we're in:
+  if( t192 > 0x80) {                     // hottest
+    pixels[Pixel].setRGB(0, heatramp, 0);
+  } else if( t192 > 0x40 ) {             // middle
+    pixels[Pixel].setRGB(0, heatramp, 0);
+  } else {                               // coolest
+    pixels[Pixel].setRGB(0, heatramp, 0);
+  }
+ }
+ else {
   // figure out which third of the spectrum we're in:
   if( t192 > 0x80) {                     // hottest
     pixels[Pixel].setRGB(255, 255, heatramp);
@@ -489,6 +542,7 @@ void setPixelHeatColor (int Pixel, byte temperature) {
   } else {                               // coolest
     pixels[Pixel].setRGB(heatramp, 0, 0);
   }
+}
 }
 
 
@@ -511,7 +565,7 @@ void randombuzz() {
       
       
       if (currpos == j) {
-          pixels[j] = CRGB::White;
+          pixels[j] = (eagles_mode ? CRGB_eaglesgreen : CRGB::White);
       }
       else if (j == nextrand) {
           pixels[j].setRGB(20,0,0); // dim red
@@ -538,7 +592,7 @@ void rect() {
       for (int j=0; j < NUMPIXELS;j++ ){
       
      if (i%12 == j%12 || (j+6 + ((i+NUMPIXELS*times)/7)) % 12 == i  % 12) {
-      pixels[j].setHue(animationframe%256); // superbright white
+      pixels[j].setHue(eagles_mode ? EAGLESGREEN_HUE : animationframe%256); // superbright white
       
      }
       else {
@@ -559,7 +613,7 @@ void square() {
       for (int j=0; j < NUMPIXELS;j++ ){
       
       if (i%6 == j%6 ) {
-        pixels[j].setHue(animationframe%256);
+        pixels[j].setHue(eagles_mode ? EAGLESGREEN_HUE : animationframe%256);
     
      }
        else {
@@ -584,7 +638,7 @@ void smile() {
     for (int j=0; j < NUMPIXELS;j++ ){
       
       if (j <= 4 || j == 9 || j == 15 || j >=20 ) {
-          pixels[(j+i)%NUMPIXELS].setHue((i*4)%256); // from colorwheel
+          pixels[(j+i)%NUMPIXELS].setHue((eagles_mode ? EAGLESGREEN_HUE : (i*4)%256)); // from colorwheel
       }
       else {
          pixels[(j+i)%NUMPIXELS] = CRGB::Black; //off
@@ -601,7 +655,7 @@ void halves() {
     for (int j=0; j < NUMPIXELS;j++ ){
       
       if (j/12 == i % 2) {
-          pixels[(j+i)%NUMPIXELS].setHue( ((i*4)+((i%2)*128))%256); // from colorwheel
+          pixels[(j+i)%NUMPIXELS].setHue( (eagles_mode ? EAGLESGREEN_HUE : ((i*4)+((i%2)*128))%256)); // from colorwheel
       }
       else {
          pixels[(j+i)%NUMPIXELS] = CRGB::Black;   // off
@@ -619,7 +673,7 @@ void quarters() {
     for (int j=0; j < NUMPIXELS;j++ ){
       
       if (j/6 == i % 4) {
-          pixels[j].setHue((i*8)%256); // from colorwheel
+          pixels[j].setHue((eagles_mode ? EAGLESGREEN_HUE : (i*8)%256)); // from colorwheel
       }
       else {
          pixels[j] = CRGB::Black;
@@ -648,13 +702,13 @@ void bounce2() {
     for (int j=0; j < NUMPIXELS;j++ ){
       
       if ((i==j || NUMPIXELS-j == i) && i < 6) {
-        pixels[j] = CRGB::Fuchsia;
+        pixels[j] = (eagles_mode ? CRGB_eaglesgreen : CRGB::Fuchsia);
       
      } else  if ((i==j || NUMPIXELS-j == i) && (i >= 6 && i < 12)) {
-        pixels[j] = (j < 12 ? CRGB::Red : CRGB::Lime);  //red on the left, green on the right
+        pixels[j] = (j < 12 ? (eagles_mode ? CRGB_eaglesgreen : CRGB::Red) : (eagles_mode ? CRGB_eaglesgreen : CRGB::Lime));  //red on the left, green on the right
       
      }else  if ((i==j || NUMPIXELS-j == i) && (i = 12)) {
-        pixels[j] = CRGB::Blue;
+        pixels[j] = (eagles_mode ? CRGB_eaglesgreen : CRGB::Blue);
         
      }
       else {
@@ -675,7 +729,7 @@ void bounce() {
       for (int j=0; j < NUMPIXELS;j++ ){
       
       if (i==j || NUMPIXELS-j == i ) {
-        pixels[j] = CRGB::Red;
+        pixels[j] = (eagles_mode ? CRGB_eaglesgreen : CRGB::Red);
       }
       else {
         pixels[j] = CRGB::Black;
@@ -692,7 +746,7 @@ void randompos() {
      int thisone = random8(NUMPIXELS);
 
      fill_solid(pixels, NUMPIXELS, CRGB::Black);
-     pixels[thisone].setRGB(random8(),random8(),random8());
+     (eagles_mode ?  pixels[thisone] = CRGB_eaglesgreen : pixels[thisone].setRGB(random8(),random8(),random8()));
      
      FastLED.show(); // This sends the updated pixel color to the hardware.  
 }
@@ -702,7 +756,7 @@ void colorflash() {
 
     if (animationframe % 24 == 0)
     {
-      fill_solid(pixels, NUMPIXELS, CHSV(random8(),255,255));
+      fill_solid(pixels, NUMPIXELS, (eagles_mode ? CRGB_eaglesgreen : CHSV(random8(),255,255)));
       FastLED.show();
     }
     else if (animationframe % 24 == 5)
@@ -720,7 +774,7 @@ void superbright() {
     for (int j=0; j < NUMPIXELS;j++ ){
       
     if (i%8 == j%8 ) {
-        pixels[j] = CRGB::White;
+        pixels[j] = (eagles_mode ? CRGB_eaglesgreen : CRGB::White);
     }
     else {
       pixels[j] = CRGB::Black; // off.
@@ -743,7 +797,7 @@ void circlechase() {
     
     if (((NUMPIXELS + (j - i) )% NUMPIXELS) < 6 ) {
     
-    pixels[j] = CHSV(animationframe%256, 255, pixelbright); 
+    pixels[j] = CHSV((eagles_mode ? EAGLESGREEN_HUE: animationframe%256), 255, pixelbright); 
    }
     else {
       pixels[j] = CRGB::Black; // off.
@@ -760,9 +814,9 @@ void gradientwipe1() {
 if (animationframe % 5 != 0) return;
 int i = (animationframe / 5) % (NUMPIXELS/2);
 
-static int the_color = random8();
+static int the_color = (eagles_mode ? EAGLESGREEN_HUE : random8());
 static int startpos = random8(NUMPIXELS);
-if (i == 0) { the_color = random8(); startpos += NUMPIXELS/3 + random8(5); }
+if (i == 0) { (eagles_mode ? EAGLESGREEN_HUE : random8()); startpos += NUMPIXELS/3 + random8(5); }
 
 for (int j = 0; j < NUMPIXELS/2; j++) {
   // color gradient wipe, brightness is highest at the frame number
@@ -783,9 +837,9 @@ FastLED.show();
 void flashlight()
 {
   //set to all white 
-  fill_solid(pixels, NUMPIXELS, (flashlight_mode != 2 ? CRGB::White : CRGB::Black));
-  fill_solid(pixels_l, NUMPIXELS_L, (flashlight_mode >= 2 ? CRGB::White : CRGB::Black));
-  fill_solid(pixels_r, NUMPIXELS_R, (flashlight_mode >= 2 ? CRGB::White : CRGB::Black));
+  fill_solid(pixels, NUMPIXELS, (flashlight_mode != 2 ? (eagles_mode > 0 ? CRGB_eaglesgreen : CRGB::White) : CRGB::Black));
+  fill_solid(pixels_l, NUMPIXELS_L, (flashlight_mode >= 2 ? (eagles_mode > 0 ? CRGB_eaglesgreen : CRGB::White): CRGB::Black));
+  fill_solid(pixels_r, NUMPIXELS_R, (flashlight_mode >= 2 ? (eagles_mode > 0 ? CRGB_eaglesgreen : CRGB::White) : CRGB::Black));
   FastLED.show();
 }
 
@@ -957,8 +1011,26 @@ void quick_tone_down()
   delay(30);
   noTone(TONEPIN);
  }
+
+void fly_eagles_fly() {
+  for (int thisNote = 0; thisNote < 13; thisNote++) {
+
+    // to calculate the note duration, take one second
+    // divided by the note type.
+    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+    int noteDuration = 1000 / noteDurations_fef[thisNote];
+    tone(TONEPIN, melody_fef[thisNote], noteDuration);
+
+    // to distinguish the notes, set a minimum time between them.
+    // the note's duration + 30% seems to work well:
+    int pauseBetweenNotes = noteDuration * 1.30;
+    delay(pauseBetweenNotes);
+    // stop the tone playing:
+    noTone(TONEPIN);
+  }
+}
 void la_cucaracha() {
- for (int thisNote = 0; thisNote < 19; thisNote++) {
+ for (int thisNote = 0; thisNote < FEF_NUM_NOTES; thisNote++) {
 
     // to calculate the note duration, take one second
     // divided by the note type.
