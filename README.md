@@ -1,5 +1,5 @@
 # arduino-halloween-costume
-Arduino "Robot" Halloween Costume with NeoPixel LED, buttons, and sound effects.  21 animations and a very special  self-destruct sequence designed by my son. NEW!!! Eagles Mode for the SUPERBOWL 2-12-203
+Arduino "Robot" Halloween Costume with NeoPixel LED, buttons, and sound effects.  21 animations and a very special  self-destruct sequence designed by my son. NEW!!! Eagles Mode for the SUPERBOWL 2-12-2023
 
 [![Image](https://raw.githubusercontent.com/davetorok/arduino-halloween-costume/master/images/20161022-1720-49_800.jpg)](https://raw.githubusercontent.com/davetorok/arduino-halloween-costume/master/images/20161022-1720-49_800.jpg)
 
